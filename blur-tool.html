@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Roll Blur Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #252525;
+            padding: 12px 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .controls {
+            background: #202020;
+            padding: 16px 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            color: #b0b0b0;
+            min-width: 80px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            height: 4px;
+            border-radius: 2px;
+            background: #3a3a3a;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff6b35;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff6b35;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            font-size: 13px;
+            color: #ff6b35;
+            font-weight: 600;
+            min-width: 35px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #ff6b35;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            min-width: auto;
+        }
+
+        button {
+            padding: 8px 20px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #ff8555;
+        }
+
+        button:disabled {
+            background: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: #3a3a3a;
+            color: #e0e0e0;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: #4a4a4a;
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        #canvas {
+            max-width: 100%;
+            max-height: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            cursor: crosshair;
+        }
+
+        .drop-zone {
+            position: absolute;
+            inset: 20px;
+            border: 3px dashed #3a3a3a;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        .drop-zone.active {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .drop-zone.hidden {
+            display: none;
+        }
+
+        .drop-zone-icon {
+            font-size: 48px;
+            color: #3a3a3a;
+        }
+
+        .drop-zone.active .drop-zone-icon {
+            color: #ff6b35;
+        }
+
+        .drop-zone-text {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .drop-zone.active .drop-zone-text {
+            color: #ff6b35;
+        }
+
+        .regions-list {
+            background: #202020;
+            border-top: 1px solid #333;
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .region-item {
+            background: #2a2a2a;
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .region-item .type {
+            color: #ff6b35;
+            font-weight: 600;
+        }
+
+        .region-item .remove {
+            color: #666;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 4px;
+        }
+
+        .region-item .remove:hover {
+            color: #ff6b35;
+        }
+
+        .status-bar {
+            background: #181818;
+            padding: 8px 20px;
+            border-top: 1px solid #2a2a2a;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>B-Roll Blur Tool</h1>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Effect Type:</label>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="blur-type" name="effect-type" value="blur" checked>
+                    <label for="blur-type">Gaussian Blur</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="pixelate-type" name="effect-type" value="pixelate">
+                    <label for="pixelate-type">Pixelate</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Intensity:</label>
+            <div class="slider-container">
+                <input type="range" id="intensity-slider" min="1" max="20" value="10">
+                <span class="slider-value" id="intensity-value">10px</span>
+            </div>
+        </div>
+
+        <div class="control-group" style="margin-left: auto;">
+            <button id="clear-btn" class="secondary" disabled>Clear All Regions</button>
+            <button id="export-btn" disabled>Export PNG</button>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+        <div class="drop-zone" id="drop-zone">
+            <div class="drop-zone-icon">&#8682;</div>
+            <div class="drop-zone-text">Drop an image here to start</div>
+        </div>
+    </div>
+
+    <div class="regions-list" id="regions-list">
+        <span>Blur Regions: None</span>
+    </div>
+
+    <div class="status-bar">
+        <span id="status-left">Ready</span>
+        <span id="status-right"></span>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const dropZone = document.getElementById('drop-zone');
+        const intensitySlider = document.getElementById('intensity-slider');
+        const intensityValue = document.getElementById('intensity-value');
+        const clearBtn = document.getElementById('clear-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const regionsList = document.getElementById('regions-list');
+        const statusLeft = document.getElementById('status-left');
+        const statusRight = document.getElementById('status-right');
+        const blurTypeRadio = document.getElementById('blur-type');
+        const pixelateTypeRadio = document.getElementById('pixelate-type');
+
+        let originalImage = null;
+        let originalImageData = null;
+        let fileName = '';
+        let isDrawing = false;
+        let startX, startY;
+        let regions = [];
+        let currentRect = null;
+
+        // Update intensity value display
+        intensitySlider.addEventListener('input', (e) => {
+            intensityValue.textContent = e.target.value + 'px';
+        });
+
+        // Drag and drop handlers
+        document.body.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+
+        document.body.addEventListener('dragleave', (e) => {
+            if (e.target === document.body || e.target === dropZone) {
+                dropZone.classList.remove('active');
+            }
+        });
+
+        document.body.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+
+        function loadImage(file) {
+            fileName = file.name.replace(/\.[^/.]+$/, '');
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    originalImage = img;
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // Store original image data
+                    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                    dropZone.classList.add('hidden');
+                    exportBtn.disabled = false;
+                    statusLeft.textContent = 'Image loaded - Draw rectangles to select blur regions';
+                    statusRight.textContent = `${img.width} × ${img.height}`;
+                    regions = [];
+                    updateRegionsList();
+                };
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Canvas drawing handlers
+        canvas.addEventListener('mousedown', (e) => {
+            if (!originalImage) return;
+
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            isDrawing = true;
+            currentRect = null;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !originalImage) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+
+            // Redraw image and all existing regions
+            redrawCanvas();
+
+            // Draw current selection
+            const width = currentX - startX;
+            const height = currentY - startY;
+
+            ctx.strokeStyle = '#ff6b35';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(startX, startY, width, height);
+            ctx.setLineDash([]);
+
+            currentRect = { x: startX, y: startY, width, height };
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (!isDrawing || !originalImage) return;
+
+            isDrawing = false;
+
+            if (currentRect && Math.abs(currentRect.width) > 5 && Math.abs(currentRect.height) > 5) {
+                // Normalize rectangle (handle negative width/height)
+                const x = currentRect.width < 0 ? startX + currentRect.width : startX;
+                const y = currentRect.height < 0 ? startY + currentRect.height : startY;
+                const width = Math.abs(currentRect.width);
+                const height = Math.abs(currentRect.height);
+
+                const effectType = blurTypeRadio.checked ? 'blur' : 'pixelate';
+                const intensity = parseInt(intensitySlider.value);
+
+                regions.push({ x, y, width, height, type: effectType, intensity });
+                updateRegionsList();
+                redrawCanvas();
+                clearBtn.disabled = false;
+            }
+
+            currentRect = null;
+        });
+
+        function redrawCanvas() {
+            // Restore original image
+            ctx.putImageData(originalImageData, 0, 0);
+
+            // Apply all regions
+            regions.forEach((region, index) => {
+                applyEffect(region);
+
+                // Draw outline
+                ctx.strokeStyle = '#ff6b35';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(region.x, region.y, region.width, region.height);
+
+                // Draw index number
+                ctx.fillStyle = '#ff6b35';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText((index + 1).toString(), region.x + 5, region.y + 20);
+            });
+        }
+
+        function applyEffect(region) {
+            const imageData = ctx.getImageData(region.x, region.y, region.width, region.height);
+
+            if (region.type === 'blur') {
+                applyGaussianBlur(imageData, region.intensity);
+            } else {
+                applyPixelate(imageData, region.intensity);
+            }
+
+            ctx.putImageData(imageData, region.x, region.y);
+        }
+
+        function applyGaussianBlur(imageData, radius) {
+            const pixels = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+
+            // Create temporary buffer
+            const temp = new Uint8ClampedArray(pixels);
+
+            // Horizontal pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0, a = 0, count = 0;
+
+                    for (let kx = -radius; kx <= radius; kx++) {
+                        const px = x + kx;
+                        if (px >= 0 && px < width) {
+                            const idx = (y * width + px) * 4;
+                            r += pixels[idx];
+                            g += pixels[idx + 1];
+                            b += pixels[idx + 2];
+                            a += pixels[idx + 3];
+                            count++;
+                        }
+                    }
+
+                    const idx = (y * width + x) * 4;
+                    temp[idx] = r / count;
+                    temp[idx + 1] = g / count;
+                    temp[idx + 2] = b / count;
+                    temp[idx + 3] = a / count;
+                }
+            }
+
+            // Vertical pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0, a = 0, count = 0;
+
+                    for (let ky = -radius; ky <= radius; ky++) {
+                        const py = y + ky;
+                        if (py >= 0 && py < height) {
+                            const idx = (py * width + x) * 4;
+                            r += temp[idx];
+                            g += temp[idx + 1];
+                            b += temp[idx + 2];
+                            a += temp[idx + 3];
+                            count++;
+                        }
+                    }
+
+                    const idx = (y * width + x) * 4;
+                    pixels[idx] = r / count;
+                    pixels[idx + 1] = g / count;
+                    pixels[idx + 2] = b / count;
+                    pixels[idx + 3] = a / count;
+                }
+            }
+        }
+
+        function applyPixelate(imageData, blockSize) {
+            const pixels = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+
+            for (let y = 0; y < height; y += blockSize) {
+                for (let x = 0; x < width; x += blockSize) {
+                    // Calculate average color for this block
+                    let r = 0, g = 0, b = 0, a = 0, count = 0;
+
+                    for (let by = 0; by < blockSize && y + by < height; by++) {
+                        for (let bx = 0; bx < blockSize && x + bx < width; bx++) {
+                            const idx = ((y + by) * width + (x + bx)) * 4;
+                            r += pixels[idx];
+                            g += pixels[idx + 1];
+                            b += pixels[idx + 2];
+                            a += pixels[idx + 3];
+                            count++;
+                        }
+                    }
+
+                    r = Math.floor(r / count);
+                    g = Math.floor(g / count);
+                    b = Math.floor(b / count);
+                    a = Math.floor(a / count);
+
+                    // Fill the block with average color
+                    for (let by = 0; by < blockSize && y + by < height; by++) {
+                        for (let bx = 0; bx < blockSize && x + bx < width; bx++) {
+                            const idx = ((y + by) * width + (x + bx)) * 4;
+                            pixels[idx] = r;
+                            pixels[idx + 1] = g;
+                            pixels[idx + 2] = b;
+                            pixels[idx + 3] = a;
+                        }
+                    }
+                }
+            }
+        }
+
+        function updateRegionsList() {
+            if (regions.length === 0) {
+                regionsList.innerHTML = '<span>Blur Regions: None</span>';
+                clearBtn.disabled = true;
+            } else {
+                const items = regions.map((region, index) => {
+                    const type = region.type === 'blur' ? 'Blur' : 'Pixelate';
+                    return `
+                        <div class="region-item">
+                            <span class="type">${type}</span>
+                            <span>${region.intensity}px</span>
+                            <span class="remove" onclick="removeRegion(${index})">×</span>
+                        </div>
+                    `;
+                }).join('');
+
+                regionsList.innerHTML = `<span>Regions (${regions.length}):</span>` + items;
+                clearBtn.disabled = false;
+            }
+        }
+
+        function removeRegion(index) {
+            regions.splice(index, 1);
+            updateRegionsList();
+            redrawCanvas();
+        }
+
+        // Make removeRegion globally accessible
+        window.removeRegion = removeRegion;
+
+        clearBtn.addEventListener('click', () => {
+            regions = [];
+            updateRegionsList();
+            redrawCanvas();
+        });
+
+        exportBtn.addEventListener('click', () => {
+            if (!originalImage) return;
+
+            // Create final canvas with all effects applied
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = canvas.width;
+            exportCanvas.height = canvas.height;
+            const exportCtx = exportCanvas.getContext('2d', { willReadFrequently: true });
+
+            // Draw original image
+            exportCtx.putImageData(originalImageData, 0, 0);
+
+            // Apply all regions without outlines
+            regions.forEach(region => {
+                const imageData = exportCtx.getImageData(region.x, region.y, region.width, region.height);
+
+                if (region.type === 'blur') {
+                    applyGaussianBlur(imageData, region.intensity);
+                } else {
+                    applyPixelate(imageData, region.intensity);
+                }
+
+                exportCtx.putImageData(imageData, region.x, region.y);
+            });
+
+            // Export as PNG
+            exportCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${fileName}_blurred.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                statusLeft.textContent = 'Exported successfully!';
+                setTimeout(() => {
+                    statusLeft.textContent = 'Ready';
+                }, 3000);
+            }, 'image/png');
+        });
+    </script>
+</body>
+</html>
