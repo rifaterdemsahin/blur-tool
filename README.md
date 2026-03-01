@@ -29,6 +29,11 @@ Professional blur tool for video production workflows - quickly blur sensitive i
 - **[Blur Tool](https://rifaterdemsahin.github.io/blur-tool/blur-tool.html)** - Launch the application
 - **[DaVinci Resolve Guide](https://rifaterdemsahin.github.io/blur-tool/davinci-resolve-blur.html)** - Complete Fusion blur workflow
 
+### Visual Reference Guides (PDF)
+
+- **[Blur Node Location](blur%20node%20location.pdf)** - How to find and add the Blur node
+- **[Effect Mask Input](effect%20mask%20%20input%20for%20davinci%20resolve.pdf)** - Connecting masks to blur nodes
+
 ## Use Cases
 
 - Blur sensitive information (passwords, emails, personal data)
