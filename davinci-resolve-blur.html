@@ -259,6 +259,88 @@
             border-bottom: none;
         }
 
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .checklist {
+            background: #202020;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin: 30px 0;
+        }
+
+        .checklist h3 {
+            color: #ff6b35;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #252525;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: #2a2a2a;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-right: 12px;
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #ff6b35;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            color: #b0b0b0;
+            flex: 1;
+        }
+
+        .checklist-item.completed label {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .checklist-category {
+            margin-top: 30px;
+        }
+
+        .checklist-category:first-child {
+            margin-top: 0;
+        }
+
+        .checklist-category h4 {
+            color: #ff8555;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
         @media (max-width: 768px) {
             .method-comparison {
                 grid-template-columns: 1fr;
@@ -299,6 +381,184 @@
             <h4>What is Fusion?</h4>
             <p>Fusion is DaVinci Resolve's node-based compositing and VFX environment. It's integrated directly into Resolve and provides professional-grade tools for motion graphics, visual effects, and compositing. Unlike layer-based systems, Fusion uses a node graph where each effect is a "node" that can be connected to create complex effect chains.</p>
         </div>
+
+        <h2>Video Tutorial</h2>
+
+        <p>Watch this comprehensive tutorial on blurring faces and objects in DaVinci Resolve Fusion:</p>
+
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/Bp71pEgrJN8" title="DaVinci Resolve Fusion Blur Tutorial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <h2>Self-Learner Checklist</h2>
+
+        <div class="checklist">
+            <h3>Master DaVinci Resolve Blur - Step by Step</h3>
+            <p style="color: #888; margin-bottom: 30px;">Check off each item as you complete it. Your progress is saved in your browser.</p>
+
+            <div class="checklist-category">
+                <h4>Getting Started (Prerequisites)</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-1">
+                    <label for="check-1">Install DaVinci Resolve (free or Studio version)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-2">
+                    <label for="check-2">Watch the video tutorial above (full watch)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-3">
+                    <label for="check-3">Download or prepare a test image/video clip</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Basic Workflow (First Practice Run)</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-4">
+                    <label for="check-4">Create a new project in DaVinci Resolve</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-5">
+                    <label for="check-5">Import test media to Media Pool</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-6">
+                    <label for="check-6">Add media to timeline</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-7">
+                    <label for="check-7">Switch to Fusion page and identify MediaIn/MediaOut nodes</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-8">
+                    <label for="check-8">Add a Blur node (Shift+Space → "blur")</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-9">
+                    <label for="check-9">Adjust Blur Size parameter and observe full-frame blur</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Selective Blur with Masks</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-10">
+                    <label for="check-10">Add a Rectangle mask node to the Blur node</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-11">
+                    <label for="check-11">Position and scale the mask in the Viewer</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-12">
+                    <label for="check-12">Add Soft Edge to mask (0.1-0.3) for natural blending</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-13">
+                    <label for="check-13">Experiment with different mask shapes (Ellipse, Polygon)</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Multiple Blur Regions</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-14">
+                    <label for="check-14">Duplicate a Blur + Mask node set (Ctrl+C, Ctrl+V)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-15">
+                    <label for="check-15">Add a Merge node to combine multiple blur regions</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-16">
+                    <label for="check-16">Successfully connect MediaIn → Merge → Blurs → MediaOut</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-17">
+                    <label for="check-17">Create a project with 3+ blur regions</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Advanced Techniques</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-18">
+                    <label for="check-18">Try different blur types (Gaussian, Defocus, Radial)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-19">
+                    <label for="check-19">Experiment with Pixelate effect for stronger obscuring</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-20">
+                    <label for="check-20">Add a Planar Tracker node to track a moving object (video only)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-21">
+                    <label for="check-21">Connect tracker to mask and verify it follows movement</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Export and Real-World Application</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-22">
+                    <label for="check-22">Export a still frame with blur applied (Generate Still)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-23">
+                    <label for="check-23">Render a full video clip with blur via Deliver page</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-24">
+                    <label for="check-24">Complete a real project: blur sensitive info in B-roll footage</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-25">
+                    <label for="check-25">Compare workflow time vs Browser Blur Tool for static images</label>
+                </div>
+            </div>
+
+            <div class="checklist-category">
+                <h4>Troubleshooting Mastery</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-26">
+                    <label for="check-26">Fix "blur not appearing" issue by checking node connections</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-27">
+                    <label for="check-27">Solve "hard mask edges" by adjusting Soft Edge parameter</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check-28">
+                    <label for="check-28">Improve performance by lowering timeline playback resolution</label>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Save and restore checklist state
+            document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
+                const id = checkbox.id;
+
+                // Restore state from localStorage
+                if (localStorage.getItem(id) === 'true') {
+                    checkbox.checked = true;
+                    checkbox.parentElement.classList.add('completed');
+                }
+
+                // Save state on change
+                checkbox.addEventListener('change', function() {
+                    localStorage.setItem(id, this.checked);
+                    if (this.checked) {
+                        this.parentElement.classList.add('completed');
+                    } else {
+                        this.parentElement.classList.remove('completed');
+                    }
+                });
+            });
+        </script>
 
         <h2>Why Use Fusion for Blurring?</h2>
 
