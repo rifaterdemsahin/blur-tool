@@ -256,9 +256,29 @@
             display: flex;
             justify-content: space-between;
         }
+
+        nav {
+            background: #252525;
+            border-bottom: 2px solid #ff6b35;
+            padding: 0;
+        }
+
+        nav a:hover {
+            color: #fff;
+            background: #2a2a2a;
+            border-bottom-color: #ff6b35;
+        }
     </style>
 </head>
 <body>
+    <nav>
+        <ul style="list-style: none; display: flex; justify-content: center; gap: 0; margin: 0; padding: 0;">
+            <li><a href="index.html" style="display: block; padding: 16px 32px; color: #b0b0b0; text-decoration: none; font-weight: 500; transition: all 0.3s; border-bottom: 3px solid transparent;">Home</a></li>
+            <li><a href="blur-tool.html" class="active" style="display: block; padding: 16px 32px; color: #ff6b35; text-decoration: none; font-weight: 500; transition: all 0.3s; border-bottom: 3px solid #ff6b35;">Blur Tool</a></li>
+            <li><a href="davinci-resolve-blur.html" style="display: block; padding: 16px 32px; color: #b0b0b0; text-decoration: none; font-weight: 500; transition: all 0.3s; border-bottom: 3px solid transparent;">DaVinci Resolve Guide</a></li>
+        </ul>
+    </nav>
+
     <div class="header">
         <h1>B-Roll Blur Tool</h1>
     </div>
